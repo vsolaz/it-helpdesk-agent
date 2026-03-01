@@ -1,6 +1,21 @@
-<ng-container *ngIf="{ loading: loading$ | async } as state">
-  <div class="message-input-container">
-    <input class="message-input" type="text" placeholder="Type your message..." [(ngModel)]="inputText" [disabled]="!!state.loading" (keydown.enter)="send(!!state.loading)" aria-label="Message input" />
-    <button class="send-button" [disabled]="!!state.loading" (click)="send(!!state.loading)" aria-label="Send message">Send</button>
-  </div>
-</ng-container>
+<div class="input-container">
+  <button class="new-chat-btn" (click)="onNewConversation()" title="New conversation">
+    <span>+</span>
+  </button>
+  <textarea
+    #inputArea
+    class="message-input"
+    placeholder="Describe your IT issue..."
+    [(ngModel)]="inputText"
+    (keydown.enter)="onEnter($event)"
+    [disabled]="loading$ | async"
+    rows="1"
+  ></textarea>
+  <button
+    class="send-btn"
+    (click)="onSend()"
+    [disabled]="(loading$ | async) || !inputText.trim()"
+  >
+    ➤
+  </button>
+</div>
