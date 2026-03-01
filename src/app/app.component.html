@@ -1,0 +1,4 @@
+<div class="app-shell">
+  <app-chat-window></app-chat-window>
+  <app-message-input (messageSent)="conversationService.sendMessage($event)"></app-message-input>
+</div>

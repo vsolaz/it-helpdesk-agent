@@ -1,0 +1,11 @@
+<div class="chat-window">
+  <div class="messages-list">
+    <div *ngFor="let message of (messages$ | async)" class="message-bubble" [class.user-bubble]="message.role === 'user'" [class.agent-bubble]="message.role === 'agent'">
+      <span class="bubble-content">{{ message.content }}</span>
+      <span class="bubble-timestamp">{{ message.timestamp | date:'shortTime' }}</span>
+    </div>
+  </div>
+  <div *ngIf="loading$ | async" class="loading-indicator" aria-label="Agent is typing">
+    <span class="spinner"></span><span class="loading-text">Agent is typing…</span>
+  </div>
+</div>
