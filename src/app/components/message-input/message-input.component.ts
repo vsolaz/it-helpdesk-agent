@@ -11,13 +11,26 @@ import { ConversationService } from '../../services/conversation.service';
 })
 export class MessageInputComponent {
   @Output() messageSent = new EventEmitter<string>();
+  @Output() newConversation = new EventEmitter<void>();
   inputText = '';
   readonly loading$ = this.conversationService.loading$;
   constructor(private conversationService: ConversationService) {}
-  send(isLoading: boolean): void {
+
+  onSend(): void {
     const trimmed = this.inputText.trim();
-    if (!trimmed || isLoading) return;
+    if (!trimmed) return;
     this.messageSent.emit(trimmed);
     this.inputText = '';
+  }
+
+  onEnter(event: Event): void {
+    const ke = event as KeyboardEvent;
+    if (ke.shiftKey) return;
+    event.preventDefault();
+    this.onSend();
+  }
+
+  onNewConversation(): void {
+    window.location.reload();
   }
 }
