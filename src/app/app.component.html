@@ -1,4 +1,10 @@
-<div class="app-shell">
-  <app-chat-window></app-chat-window>
-  <app-message-input (messageSent)="conversationService.sendMessage($event)"></app-message-input>
+<div class="app-container">
+  <div class="chat-card">
+    <div class="chat-header">
+      <img src="assets/img/logo_mapfre-insurance.webp" alt="Mapfre Insurance" class="header-logo" />
+      <h1 class="header-title">Mapfre Insurance Technical Support Center</h1>
+    </div>
+    <app-chat-window></app-chat-window>
+    <app-message-input (messageSent)="conversationService.sendMessage($event)"></app-message-input>
+  </div>
 </div>
