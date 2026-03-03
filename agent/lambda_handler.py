@@ -1,4 +1,4 @@
-"""AWS Lambda handler — proxies requests to AgentCore Runtime."""
+"""AWS Lambda handler — proxies requests to AgentCore Runtime with session pinning."""
 
 import json
 import os
@@ -9,18 +9,48 @@ AGENT_ARN = os.environ.get(
     "arn:aws:bedrock-agentcore:us-east-1:903026258626:runtime/musa_helpdesk_strands-KaU5kjAIQs",
 )
 REGION = os.environ.get("AWS_REGION", "us-east-1")
-_client = None
+SESSIONS_TABLE = os.environ.get("SESSIONS_TABLE", "helpdesk-sessions")
 
-def _get_client():
-    global _client
-    if _client is None:
-        _client = boto3.client("bedrock-agentcore", region_name=REGION)
-    return _client
+_agentcore_client = None
+_ddb = None
+
+def _get_agentcore():
+    global _agentcore_client
+    if _agentcore_client is None:
+        _agentcore_client = boto3.client("bedrock-agentcore", region_name=REGION)
+    return _agentcore_client
+
+def _get_ddb():
+    global _ddb
+    if _ddb is None:
+        _ddb = boto3.resource("dynamodb", region_name=REGION).Table(SESSIONS_TABLE)
+    return _ddb
+
+def _get_runtime_session(session_id: str) -> str | None:
+    try:
+        resp = _get_ddb().get_item(Key={"session_id": session_id})
+        return resp.get("Item", {}).get("runtime_session_id")
+    except Exception:
+        return None
+
+def _save_runtime_session(session_id: str, runtime_session_id: str):
+    try:
+        import time
+        _get_ddb().put_item(Item={"session_id": session_id, "runtime_session_id": runtime_session_id, "ttl": int(time.time()) + 3600})
+    except Exception:
+        pass
 
 def _invoke_agentcore(session_id: str, message: str) -> str:
-    client = _get_client()
+    client = _get_agentcore()
     payload = json.dumps({"prompt": message, "session_id": session_id})
-    response = client.invoke_agent_runtime(agentRuntimeArn=AGENT_ARN, qualifier="DEFAULT", payload=payload)
+    params = {"agentRuntimeArn": AGENT_ARN, "qualifier": "DEFAULT", "payload": payload}
+    runtime_session_id = _get_runtime_session(session_id)
+    if runtime_session_id:
+        params["runtimeSessionId"] = runtime_session_id
+    response = client.invoke_agent_runtime(**params)
+    new_rsid = response.get("runtimeSessionId")
+    if new_rsid:
+        _save_runtime_session(session_id, new_rsid)
     content_type = response.get("contentType", "")
     if "text/event-stream" in content_type:
         parts = []
@@ -42,8 +72,7 @@ def handler(event, context):
         body = json.loads(event.get("body", "{}"))
     except (json.JSONDecodeError, TypeError):
         body = {}
-    path = event.get("path", "")
-    if path.endswith("/health"):
+    if event.get("path", "").endswith("/health"):
         return {"statusCode": 200, "headers": headers, "body": json.dumps({"status": "ok"})}
     session_id = body.get("session_id", "")
     message = body.get("message", "")

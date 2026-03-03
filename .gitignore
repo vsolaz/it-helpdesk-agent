@@ -6,3 +6,6 @@ __pycache__/
 .angular/
 dist/
 build.log
+.env
+.lambda_build/
+cdk.out/
