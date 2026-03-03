@@ -1,54 +1,11 @@
-.app-container {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  min-height: 100vh;
-  background: linear-gradient(135deg, #f0f4f8 0%, #d9e2ec 100%);
-  padding: 24px;
-}
-
-.chat-card {
-  display: flex;
-  flex-direction: column;
-  width: 100%;
-  max-width: 700px;
-  height: 85vh;
-  background: white;
-  border-radius: 16px;
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.12);
-  overflow: hidden;
-}
-
-.chat-header {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 8px;
-  padding: 20px 24px 16px;
-  background: linear-gradient(135deg, #1a237e 0%, #283593 100%);
-  color: white;
-}
-
-.header-logo {
-  height: 48px;
-  width: auto;
-  object-fit: contain;
-}
-
-.header-title {
-  font-size: 16px;
-  font-weight: 500;
-  letter-spacing: 0.3px;
-  text-align: center;
-  margin: 0;
-}
-
-.chat-card app-chat-window {
-  flex: 1 1 auto;
-  overflow-y: auto;
-  min-height: 0;
-}
-
-.chat-card app-message-input {
-  flex: 0 0 auto;
-}
+.app-container { display: flex; justify-content: center; align-items: center; min-height: 100vh; background: linear-gradient(135deg, #f0f4f8 0%, #d9e2ec 100%); padding: 24px; }
+.chat-card { display: flex; flex-direction: column; width: 100%; max-width: 700px; height: 85vh; background: white; border-radius: 16px; box-shadow: 0 8px 32px rgba(0,0,0,0.12); overflow: hidden; }
+.chat-header { display: flex; flex-direction: column; align-items: center; gap: 8px; padding: 16px 24px 12px; background: linear-gradient(135deg, #1a237e 0%, #283593 100%); color: white; }
+.header-logo { height: 40px; width: auto; }
+.header-title { font-size: 15px; font-weight: 500; text-align: center; margin: 0; }
+.header-user { display: flex; align-items: center; gap: 12px; margin-top: 4px; }
+.user-email { font-size: 12px; opacity: 0.8; }
+.logout-btn { padding: 4px 12px; background: rgba(255,255,255,0.15); color: white; border: 1px solid rgba(255,255,255,0.3); border-radius: 4px; font-size: 11px; cursor: pointer; }
+.logout-btn:hover { background: rgba(255,255,255,0.25); }
+.chat-card app-chat-window { flex: 1 1 auto; overflow-y: auto; min-height: 0; }
+.chat-card app-message-input { flex: 0 0 auto; }

@@ -1,10 +1,17 @@
-<div class="app-container">
-  <div class="chat-card">
-    <div class="chat-header">
-      <img src="assets/img/logo_mapfre-insurance.webp" alt="Mapfre Insurance" class="header-logo" />
-      <h1 class="header-title">Mapfre Insurance Technical Support Center</h1>
+<ng-container *ngIf="auth.user$ | async as user; else loginView">
+  <div class="app-container">
+    <div class="chat-card">
+      <div class="chat-header">
+        <img src="assets/img/logo_mapfre-insurance.webp" alt="Mapfre Insurance" class="header-logo" />
+        <h1 class="header-title">Mapfre Insurance Technical Support Center</h1>
+        <div class="header-user">
+          <span class="user-email">{{ user.email }}</span>
+          <button class="logout-btn" (click)="logout()">Sign Out</button>
+        </div>
+      </div>
+      <app-chat-window></app-chat-window>
+      <app-message-input (messageSent)="conversationService.sendMessage($event)"></app-message-input>
     </div>
-    <app-chat-window></app-chat-window>
-    <app-message-input (messageSent)="conversationService.sendMessage($event)"></app-message-input>
   </div>
-</div>
+</ng-container>
+<ng-template #loginView><app-login></app-login></ng-template>
